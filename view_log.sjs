@@ -1,4 +1,5 @@
 var logging = require("./logging.sjs");
+var vkBeautify = require("./vkbeautify.sjs");
 
 if (!String.prototype.padEnd) {
     String.prototype.padEnd = function padEnd(targetLength,padString) {
@@ -38,7 +39,14 @@ var logEntryDocuments = cts.search(
   cts.andQuery(queries),
   [cts.indexOrder(cts.jsonPropertyReference("date", ["type=dateTime"]), "ascending")]
 )
+var currenttimezone = xdmp.getRequestField("currenttimezone") != "false";
+var compact = xdmp.getRequestField("compact") != "false";
 logEntryDocuments.toArray().map(function(document){
   var logEntry = document.toObject();
-  return logEntry.date.padEnd(23) + " " + logEntry.level.padEnd(5) + " [" + logEntry.log + "|" + logEntry.user + "|" + logEntry.address + "] " + logEntry.message;
+  var date = currenttimezone ? (new Date(+(new Date(logEntry.date)) - ((new Date()).getTimezoneOffset() * 6e4))).toISOString().replace("Z", "") : logEntry.date;
+  var message = typeof logEntry.message == "object" ? vkBeautify.json(logEntry.message) : logEntry.message;
+  if(compact) {
+    message = message.replace(/\s+/g, " ");
+  }
+  return date.padEnd(23) + " " + logEntry.level.padEnd(5) + " [" + logEntry.log + "|" + logEntry.user + "|" + logEntry.address + "] " + message;
 }).join("\n")
