@@ -8,6 +8,9 @@ var Log = function(name) {
 Log.prototype.addAppender = function(appender) {
   this.appenders.push(appender);
 }
+Log.prototype.setAppenders = function(appenders) {
+  this.appenders = appenders;
+}
 Log.prototype.addLogEntry = function(level, message) {
   var logEntry = {"level": level, "levelAsNumber": LEVELS[level], "message": message, "date": new Date()};
   if(this.cacheEntries) this.logEntries.push(logEntry);
