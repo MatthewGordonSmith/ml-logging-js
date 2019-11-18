@@ -16,7 +16,7 @@ Logging for MarkLogic Server-Side JavaScript code in the Log4j style.
 
 ## Category Tagging
 
-The category tagging allows you to tail the MarkLogic log and show only those log etries for a “realtime” application log:
+The category tagging allows you to tail the MarkLogic log and show only those log entries for a “realtime” application log:
 
 `tail -f ErrorLog.txt | grep “My Log Name|”`
 
