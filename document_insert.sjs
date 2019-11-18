@@ -1,13 +1,31 @@
 declareUpdate();
 xdmp.setRequestTimeLimit(3600);
-xdmp.documentInsert(
-  uri,
-  document,
-  {
-    "permissions": permissions,
-    "collections": collections
-  }
-);
+if(typeof database != "undefined") {
+  xdmp.invokeFunction(function(){
+      xdmp.documentInsert(
+        uri,
+        document,
+        {
+          "permissions": permissions,
+          "collections": collections
+        }
+      );
+    },
+    {
+      "database": xdmp.database(database)
+    }
+  )
+}
+else {
+  xdmp.documentInsert(
+    uri,
+    document,
+    {
+      "permissions": permissions,
+      "collections": collections
+    }
+  );
+}
 if(typeof properties != "undefined") {
   var documentProperties = [];
   properties.forEach(function(property){
