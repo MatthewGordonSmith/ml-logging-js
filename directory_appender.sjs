@@ -11,7 +11,7 @@ if (typeof String.prototype.endsWith !== "function") {
     };
 }
 
-var MarkLogicDirectoryAppender = function(level, baseDirectoryPath, fileNameFunction) {
+var MarkLogicDirectoryAppender = function(level, baseDirectoryPath, fileNameFunction, database) {
   this.level = level;
   if(baseDirectoryPath == null || baseDirectoryPath == "") {
     this.baseDirectoryPath = "/";
@@ -21,6 +21,7 @@ var MarkLogicDirectoryAppender = function(level, baseDirectoryPath, fileNameFunc
   }
   this.fileNameFunction = fileNameFunction;
   this.numberOfEntriesAppended = 0;
+  this.database = database;
 };
 
 MarkLogicDirectoryAppender.prototype.getFileName = function(logEntry) {
@@ -38,16 +39,18 @@ MarkLogicDirectoryAppender.prototype.appendLogEntry = function(logName, logEntry
   logEntry.user = xdmp.getCurrentUser();
   var clientAddress =xdmp.getRequestClientAddress();
   logEntry.address = clientAddress != null ? clientAddress : xdmp.hostName();
+  var variables = {
+    "uri": uri,
+    "document": logEntry,
+    "permissions": [],
+    "collections": [
+      "Log"
+    ]
+  };
+  if(this.database != null) variables.database = this.database;
   xdmp.spawn(
     "/document_insert.sjs",
-    {
-      "uri": uri,
-      "document": logEntry,
-      "permissions": [],
-      "collections": [
-        "Log"
-      ]
-    }
+    variables
   );
   this.numberOfEntriesAppended++;
 }
