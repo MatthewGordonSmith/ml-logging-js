@@ -2,6 +2,7 @@ declareUpdate();
 xdmp.setRequestTimeLimit(3600);
 if(typeof database != "undefined") {
   xdmp.invokeFunction(function(){
+      declareUpdate();
       xdmp.documentInsert(
         uri,
         document,
@@ -14,7 +15,7 @@ if(typeof database != "undefined") {
     {
       "database": xdmp.database(database)
     }
-  )
+  );
 }
 else {
   xdmp.documentInsert(
